@@ -1,14 +1,15 @@
-# Author: Huy Le (hl9082)
-# Co-authors: Will Stott, Zoe Shearer, Josh Elliot
-# Purpose:
-#   This module contains the SpeechRecognizer class, which handles the
-#   conversion of spoken language into text. It captures audio from the
-#   microphone and uses a speech recognition service to transcribe it in
-#   real-time.
-# Importance:
-#   This module is one of the two core input methods for the application. It
-#   enables communication from hearing individuals to the user of the glasses
-#   by converting their speech into text for display.
+'''
+Authors: Huy Le (hl9082), Will Stott, Zoe Shearer, Josh Elliot
+Purpose:
+  This module contains the SpeechRecognizer class, which handles the
+  conversion of spoken language into text. It captures audio from the
+  microphone and uses a speech recognition service to transcribe it in
+  real-time.
+Importance:
+  This module is one of the two core input methods for the application. It
+  enables communication from hearing individuals to the user of the glasses
+  by converting their speech into text for display.
+'''
 
 import speech_recognition as sr
 from typing import Callable

@@ -1,14 +1,15 @@
-# Author: Huy Le (hl9082)
-# Co-authors: Will Stott, Zoe Shearer, Josh Elliot
-# Purpose:
-#   This module defines the ASLTranslator class, which is responsible for
-#   translating American Sign Language (ASL) gestures into English text. It
-#   uses the device's camera to capture video and a machine learning model to
-#   interpret the signs.
-# Importance:
-#   This is a key feature of the project and one of the two primary input
-#   methods. It allows the user to understand signed language by reading it as
-#   subtitles, directly bridging a major communication gap.
+'''
+Authors: Huy Le (hl9082), Will Stott, Zoe Shearer, Josh Elliot
+Purpose:
+  This module defines the ASLTranslator class, which is responsible for
+  translating American Sign Language (ASL) gestures into English text. It
+  uses the device's camera to capture video and a machine learning model to
+  interpret the signs.
+Importance:
+  This is a key feature of the project and one of the two primary input
+  methods. It allows the user to understand signed language by reading it as
+  subtitles, directly bridging a major communication gap.
+'''
 
 import cv2
 import time
