@@ -50,8 +50,9 @@ class SpeechRecognizer:
                 print("Listening for speech...")
                 try:
                     audio = self.recognizer.listen(source)
-                    # Use getattr to dynamically access the method. This is a clean way
-                    # to resolve static analysis errors for dynamically-added methods.
+                    # The `recognize_google` function is used here to send the captured
+                    # audio to Google's Web Speech API for transcription. 
+                    # Use getattr to dynamically access the method. 
                     text = getattr(self.recognizer, "recognize_google")(audio)
                     print(f"Speech Detected: {text}")
                     # on_recognition(f"Speech: {text}")
