@@ -1,5 +1,6 @@
 '''
-Authors: Huy Le (hl9082), Will Stott, Zoe Shearer, Josh Elliot
+Author: Huy Le (hl9082)
+Co-author: Will Stott, Zoe Shearer, Josh Elliot
 Purpose:
   This module defines the DisplayManager class, which is responsible for
   managing the visual output on the smart glasses' display. It provides a

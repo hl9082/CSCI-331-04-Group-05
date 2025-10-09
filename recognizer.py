@@ -1,5 +1,6 @@
 '''
-Authors: Huy Le (hl9082), Will Stott, Zoe Shearer, Josh Elliot
+Author: Huy Le (hl9082)
+Co-author: Will Stott, Zoe Shearer, Josh Elliot
 Purpose:
   This module contains the SpeechRecognizer class, which handles the
   conversion of spoken language into text. It captures audio from the

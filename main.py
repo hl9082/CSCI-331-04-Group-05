@@ -1,5 +1,6 @@
 '''
- Authors: Huy Le (hl9082), Will Stott, Zoe Shearer, Josh Elliot
+ Author: Huy Le (hl9082)
+ Co-author: Will Stott, Zoe Shearer, Josh Elliot
  Purpose:
    This script serves as the main entry point for the AI-Powered ASL
    Translation Glasses application. It is responsible for initializing all core

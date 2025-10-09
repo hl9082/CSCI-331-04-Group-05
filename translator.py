@@ -1,5 +1,6 @@
 '''
-Authors: Huy Le (hl9082), Will Stott, Zoe Shearer, Josh Elliot
+Author: Huy Le (hl9082)
+Co-author: Will Stott, Zoe Shearer, Josh Elliot
 Purpose:
   This module defines the ASLTranslator class, which is responsible for
   translating American Sign Language (ASL) gestures into English text. It
