@@ -1,3 +1,15 @@
+# Author: Huy Le (hl9082)
+# Co-authors: Will Stott, Zoe Shearer, Josh Elliot
+# Purpose:
+#   This module contains the SpeechRecognizer class, which handles the
+#   conversion of spoken language into text. It captures audio from the
+#   microphone and uses a speech recognition service to transcribe it in
+#   real-time.
+# Importance:
+#   This module is one of the two core input methods for the application. It
+#   enables communication from hearing individuals to the user of the glasses
+#   by converting their speech into text for display.
+
 import speech_recognition as sr
 from typing import Callable
 
@@ -10,7 +22,7 @@ class SpeechRecognizer:
         """
         Initializes the SpeechRecognizer.
         """
-        self.recognizer = sr.Recognizer()
+        self.recognizer: sr.Recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
         print("Speech Recognizer initialized.")
         self._calibrate_microphone()
@@ -38,7 +50,9 @@ class SpeechRecognizer:
                 print("Listening for speech...")
                 try:
                     audio = self.recognizer.listen(source)
-                    text = self.recognizer.recognize_google(audio)
+                    # Use getattr to dynamically access the method. This is a clean way
+                    # to resolve static analysis errors for dynamically-added methods.
+                    text = getattr(self.recognizer, "recognize_google")(audio)
                     print(f"Speech Detected: {text}")
                     # on_recognition(f"Speech: {text}")
                 except sr.UnknownValueError:

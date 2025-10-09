@@ -1,3 +1,15 @@
+# Authors: Huy Le (hl9082)
+# Co-authors: Will Stott, Zoe Shearer, Josh Elliot
+# Purpose:
+#   This script serves as the main entry point for the AI-Powered ASL
+#   Translation Glasses application. It is responsible for initializing all core
+#   components (ASL translator, speech recognizer, display manager) and
+#   orchestrating their concurrent operation in separate threads.
+# Importance:
+#   This file is critical as it ties all the modules together. Without it, the
+#   individual components cannot run as a cohesive application. It manages the
+#   main application loop and handles the startup and shutdown of services.
+
 import time
 import threading
 

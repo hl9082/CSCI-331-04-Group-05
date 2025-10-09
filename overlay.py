@@ -1,3 +1,15 @@
+# Authors: Huy Le (hl9082)
+# Co-authors: Will Stott, Zoe Shearer, Josh Elliot
+# Purpose:
+#   This module defines the DisplayManager class, which is responsible for
+#   managing the visual output on the smart glasses' display. It provides a
+#   clean interface for rendering subtitles and other visual information.
+# Importance:
+#   This module is the primary output channel for the user. Its proper
+#   functioning is essential for displaying the translated text from both ASL
+#   and speech, making the entire system useful. The implementation will be
+#   highly dependent on the specific hardware SDK of the glasses.
+
 class DisplayManager:
     """
     Manages the display on the glasses.
