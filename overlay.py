@@ -31,6 +31,9 @@ class DisplayManager:
     def update_display(self, text: str):
         """
         Updates the display with the provided text.
+        
+        Attributes:
+          test (str) : The text to display on the screen.
         """
         # In a real application, this method would draw the text on the screen.
         print(f"DISPLAY: {text}")
