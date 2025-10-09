@@ -1,0 +1,8 @@
+# Computer Vision
+opencv-python
+
+# Speech Recognition
+SpeechRecognition
+
+# Microphone Input (a dependency for SpeechRecognition)
+PyAudio
