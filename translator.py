@@ -72,4 +72,4 @@ class ASLTranslator:
             time.sleep(5) # Simulate the time it takes to perform a sign
             translated_text = "Hello"
             print(f"ASL Detected: {translated_text}")
-            # on_translation(f"ASL: {translated_text}")
+            on_translation(f"ASL: {translated_text}")
