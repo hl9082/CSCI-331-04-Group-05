@@ -10,13 +10,15 @@
 #   individual components cannot run as a cohesive application. It manages the
 #   main application loop and handles the startup and shutdown of services.
 
-import time
-import threading
 
-# Placeholder imports for the core modules.
-# from src.asl_recognition.translator import ASLTranslator
-# from src.speech_to_text.recognizer import SpeechRecognizer
-# from src.display_manager.overlay import DisplayManager
+# For pausing the main thread and managing time-related tasks.
+import time
+# For running concurrent operations (ASL and speech services).
+import threading
+# Correctly import the classes from the local modules.
+from translator import ASLTranslator # for ASL translation
+from recognizer import SpeechRecognizer #for speech recognition
+from overlay import DisplayManager # for result display
 
 def main():
     """
@@ -25,31 +27,42 @@ def main():
     print("Initializing AI-Powered ASL Translation Glasses...")
 
     # --- Initialization ---
-    # Initialize the components. In a real application, these would be
-    # complex objects managing hardware and models.
-    
-    # display_manager = DisplayManager()
-    # asl_translator = ASLTranslator()
-    # speech_recognizer = SpeechRecognizer()
+    # Initialize the core components of the application.
+    display_manager = DisplayManager()
+    asl_translator = ASLTranslator()
+    speech_recognizer = SpeechRecognizer()
 
     print("Initialization complete. Starting services...")
 
     # --- Start Services in Separate Threads ---
     # Each core function (ASL recognition, speech recognition) will run in its
     # own thread to operate concurrently.
+    asl_thread = threading.Thread(
+        target=asl_translator.start_translation, 
+        args=(display_manager.update_display,)
+    )
+    speech_thread = threading.Thread(
+        target=speech_recognizer.start_recognition, 
+        args=(display_manager.update_display,)
+    )
 
-    # asl_thread = threading.Thread(target=asl_translator.start_translation, args=(display_manager.update_display,))
-    # speech_thread = threading.Thread(target=speech_recognizer.start_recognition, args=(display_manager.update_display,))
+    # Set threads as daemon threads. This ensures they will exit automatically
+    # when the main program shuts down.
+    asl_thread.daemon = True
+    speech_thread.daemon = True
 
-    # asl_thread.start()
-    # speech_thread.start()
+    asl_thread.start()
+    speech_thread.start()
 
     print("Services running. The application is now active.")
     print("Press Ctrl+C to exit.")
 
-    # Keep the main thread alive
-    # asl_thread.join()
-    # speech_thread.join()
+    # Keep the main thread alive and wait for a keyboard interrupt (Ctrl+C).
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nShutting down application...")
 
 if __name__ == "__main__":
     main()
