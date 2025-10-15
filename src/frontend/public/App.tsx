@@ -1,5 +1,5 @@
 
-// authors: [your name]
+// authors: Huy Le (hl9082)
 // This component is the main application component.
 // It is of high importance as it is the root component of the application.
 
