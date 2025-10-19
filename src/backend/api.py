@@ -1,5 +1,4 @@
 '''
-
  @author Huy Le (hl9082)
   @co-author Will Stott, Zoe Shearer, Josh Elliot
   @purpose
@@ -9,14 +8,48 @@
   @importance
     This file is the bridge between the frontend and the backend. It exposes the
     transcription services to the user interface.
- 
-'''
-from fastapi import FastAPI, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
-# from translator import ASLTranslator
-# from recognizer import SpeechRecognizer
 
-app = FastAPI()
+'''
+import threading
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from translator import ASLTranslator
+from recognizer import SpeechRecognizer
+
+
+# --- Global State and Services ---
+latest_transcriptions = {"asl": "Initializing...", "speech": "Initializing..."}
+asl_translator = ASLTranslator()
+speech_recognizer = SpeechRecognizer()
+
+def update_asl_translation(text: str):
+    """Callback to update the latest ASL transcription."""
+    latest_transcriptions["asl"] = text
+
+def update_speech_recognition(text: str):
+    """Callback to update the latest speech recognition."""
+    latest_transcriptions["speech"] = text
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Manages the startup and shutdown of background services.
+    """
+    print("--- Starting background services ---")
+    # Run services in background threads
+    asl_thread = threading.Thread(target=asl_translator.start_translation, args=(update_asl_translation,), daemon=True)
+    speech_thread = threading.Thread(target=speech_recognizer.start_recognition, args=(update_speech_recognition,), daemon=True)
+    
+    asl_thread.start()
+    speech_thread.start()
+    
+    yield
+    
+    print("--- Application shutdown ---")
+
+app = FastAPI(lifespan=lifespan)
 
 # Configure CORS to allow requests from the frontend
 app.add_middleware(
@@ -27,32 +60,24 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# asl_translator = ASLTranslator()
-# speech_recognizer = SpeechRecognizer()
-
 @app.get("/")
 async def root():
     """
     Root endpoint to check if the API is running.
     """
-    return {"message": "Welcome to the ASL-to-subtitles API!"}
+    return {"message": "Welcome to the real-time transcription API!"}
 
-@app.post("/asl-to-text")
-async def asl_to_text(file: UploadFile = File(...)):
+@app.get("/asl-to-text")
+async def get_asl_transcription():
     """
-    Endpoint to transcribe ASL video.
-    (Placeholder implementation)
+    Endpoint to get the latest ASL transcription.
     """
-    # In a real implementation, you would save the file and process it.
-    # For now, we'll just return a dummy response.
-    return {"text": "(ASL transcription placeholder)"}
 
-@app.post("/speech-to-text")
-async def speech_to_text(file: UploadFile = File(...)):
+    return {"text": latest_transcriptions["asl"]}
+
+@app.get("/speech-to-text")
+async def get_speech_transcription():
     """
-    Endpoint to transcribe speech audio.
-    (Placeholder implementation)
+    Endpoint to get the latest speech transcription.
     """
-    # In a real implementation, you would save the file and process it.
-    # For now, we'll just return a dummy response.
-    return {"text": "(Speech transcription placeholder)"}
+    return {"text": latest_transcriptions["speech"]}
