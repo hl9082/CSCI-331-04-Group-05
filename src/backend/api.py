@@ -30,6 +30,13 @@ app.add_middleware(
 # asl_translator = ASLTranslator()
 # speech_recognizer = SpeechRecognizer()
 
+@app.get("/")
+async def root():
+    """
+    Root endpoint to check if the API is running.
+    """
+    return {"message": "Welcome to the ASL-to-subtitles API!"}
+
 @app.post("/asl-to-text")
 async def asl_to_text(file: UploadFile = File(...)):
     """
