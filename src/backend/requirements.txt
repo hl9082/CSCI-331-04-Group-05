@@ -11,5 +11,7 @@ PyAudio
 fastapi
 uvicorn[standard]
 
+torchvision # image processing
+Pillow # Python Imaging Library (PIL) fork
 torch # for pytorch
 python-multipart
