@@ -27,15 +27,34 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 
 #### Important Commands
 
-1.  **Install Dependencies:**
-    Before running the application, install the necessary packages from `requirements.txt`.
+
+1.  **Install Backend Dependencies:**
+    Install the necessary Python packages.
     ```bash
     pip install -r requirements.txt
     ```
 
-2.  **Run the Application:**
-    To start the main application, run the `main.py` script. This will initialize all services.
+
+2.  **Install Frontend Dependencies:**
+    Navigate to the frontend directory and install its dependencies (assuming a standard Node.js setup).
+    ```bash
+    cd src/frontend
+    npm install
+    ```
+
+3.  **Run the Backend Server:**
+    From the project's root directory, run the `main.py` script. This will initialize the backend services.
+    ```bash
+    cd ../.. 
     ```bash
     python main.py
     ```
-    To stop the application, press `Ctrl+C` in the terminal where it is running.
+
+
+4.  **Run the Frontend Application:**
+    In a **new terminal**, navigate to the frontend directory and start the development server.
+    ```bash
+    cd src/frontend
+    npm start
+    ```
+    You can then access the application in your web browser, typically at `http://localhost:3000`. To stop the application, press `Ctrl+C` in the terminals where the backend and frontend are running.
