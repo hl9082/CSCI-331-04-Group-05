@@ -53,6 +53,7 @@ class ASLTranslator:
         print(f"Loading model from {model_path}...")
         return "dummy_model"
 
+
     def start_translation(self, on_translation: Callable[[str], None], stop_event: threading.Event):
         """
         Starts the video capture and translation loop.
@@ -67,9 +68,8 @@ class ASLTranslator:
         on_translation("ASL service is active...")
         last_translation_time = time.time()
 
-        while True:
-            if not self.camera.isOpened():
-                self.camera.open(0) # Re-open camera if it was released
+        if not self.camera.isOpened():
+            self.camera.open(0) # Re-open camera if it was released
 
         while not stop_event.is_set():
 
