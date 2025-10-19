@@ -15,7 +15,6 @@ Importance:
 import cv2
 import time
 from typing import Callable
-import threading
 
 class ASLTranslator:
     """
@@ -53,26 +52,20 @@ class ASLTranslator:
         print(f"Loading model from {model_path}...")
         return "dummy_model"
 
-    def start_translation(self, on_translation: Callable[[str], None], stop_event: threading.Event):
+    def start_translation(self, on_translation: Callable[[str], None]):
         """
         Starts the video capture and translation loop.
 
         Args:
             on_translation (Callable[[str], None]): A callback function to be called
                 when a translation is available. It takes the translated text as an argument.
-            stop_event (threading.Event): An event to signal when to stop the loop.
         """
 
         print("Starting ASL translation service... (Press 'q' in the video window to stop)")
-        on_translation("ASL service is active...")
         last_translation_time = time.time()
 
+        while True:
 
-        # Re-initialize camera in case it was released
-        if not self.camera.isOpened():
-            self.camera.open(0)
-        
-        while not stop_event.is_set():
             ret, frame = self.camera.read()
             if not ret:
                 print("Failed to grab frame, exiting.")
@@ -91,8 +84,7 @@ class ASLTranslator:
                 last_translation_time = time.time()
 
             # Check for 'q' key press to quit the loop and close the window
-
-            if cv2.waitKey(1) & 0xFF == ord('q') or stop_event.is_set():
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
         # Release the camera and destroy all windows

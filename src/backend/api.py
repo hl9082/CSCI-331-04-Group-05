@@ -66,10 +66,9 @@ async def root():
     """
     Root endpoint to check if the API is running.
     """
-
     return {"message": "Welcome to the real-time transcription API!"}
 
-@app.post("/start/asl")
+@app.get("/start/asl")
 async def start_asl_service():
     """Starts the ASL translation service."""
     stop_current_service()
@@ -82,7 +81,7 @@ async def start_asl_service():
     state.active_thread.start()
     return {"message": "ASL translation service started."}
 
-@app.post("/start/speech")
+@app.get("/start/speech")
 async def start_speech_service():
     """Starts the speech recognition service."""
     stop_current_service()
@@ -95,7 +94,7 @@ async def start_speech_service():
     state.active_thread.start()
     return {"message": "Speech recognition service started."}
 
-@app.post("/stop")
+@app.get("/stop")
 async def stop_services():
     """Stops any currently running service."""
     stop_current_service()
@@ -117,5 +116,4 @@ async def get_speech_transcription():
     """
     Endpoint to get the latest speech recognition.
     """
-
     return {"text": state.latest_transcriptions["speech"]}
