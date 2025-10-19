@@ -1,15 +1,15 @@
 '''
-/**
- * @author Huy Le (hl9082)
- * @co-author Will Stott, Zoe Shearer, Josh Elliot
- * @purpose
- *   This module provides the API endpoints for the ASL-to-subtitles application.
- *   It uses FastAPI to create a web server that can receive requests from the
- *   frontend to perform ASL and speech transcription.
- * @importance
- *   This file is the bridge between the frontend and the backend. It exposes the
- *   transcription services to the user interface.
- */
+
+ @author Huy Le (hl9082)
+  @co-author Will Stott, Zoe Shearer, Josh Elliot
+  @purpose
+   This module provides the API endpoints for the ASL-to-subtitles application.
+    It uses FastAPI to create a web server that can receive requests from the
+   frontend to perform ASL and speech transcription.
+  @importance
+    This file is the bridge between the frontend and the backend. It exposes the
+    transcription services to the user interface.
+ 
 '''
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
