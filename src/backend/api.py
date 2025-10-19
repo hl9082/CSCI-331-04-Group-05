@@ -1,4 +1,5 @@
 '''
+
  @author Huy Le (hl9082)
   @co-author Will Stott, Zoe Shearer, Josh Elliot
   @purpose
@@ -8,7 +9,7 @@
   @importance
     This file is the bridge between the frontend and the backend. It exposes the
     transcription services to the user interface.
-
+ 
 '''
 import threading
 from contextlib import asynccontextmanager
@@ -18,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from translator import ASLTranslator
 from recognizer import SpeechRecognizer
 
-
+ 
 # --- Global State and Services ---
 latest_transcriptions = {"asl": "Initializing...", "speech": "Initializing..."}
 asl_translator = ASLTranslator()
@@ -60,16 +61,20 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+ 
 @app.get("/")
 async def root():
     """
     Root endpoint to check if the API is running.
     """
+
     return {"message": "Welcome to the real-time transcription API!"}
+
 
 @app.get("/asl-to-text")
 async def get_asl_transcription():
     """
+
     Endpoint to get the latest ASL transcription.
     """
 
@@ -78,6 +83,8 @@ async def get_asl_transcription():
 @app.get("/speech-to-text")
 async def get_speech_transcription():
     """
-    Endpoint to get the latest speech transcription.
+
+    Endpoint to get the latest speech recognition.
     """
+
     return {"text": latest_transcriptions["speech"]}

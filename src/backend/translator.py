@@ -60,16 +60,34 @@ class ASLTranslator:
             on_translation (Callable[[str], None]): A callback function to be called
                 when a translation is available. It takes the translated text as an argument.
         """
-        print("Starting ASL translation service...")
-        # This is a placeholder loop. In reality, you would capture frames,
-        # preprocess them, and feed them to your model.
+
+        print("Starting ASL translation service... (Press 'q' in the video window to stop)")
+        last_translation_time = time.time()
+
         while True:
-            # _, frame = self.camera.read()
-            # preprocessed_frame = preprocess(frame) # You would define this
-            # prediction = self.model.predict(preprocessed_frame)
-            
-            # Simulate a translation
-            time.sleep(5) # Simulate the time it takes to perform a sign
-            translated_text = "Hello"
-            print(f"ASL Detected: {translated_text}")
-            on_translation(f"ASL: {translated_text}")
+
+            ret, frame = self.camera.read()
+            if not ret:
+                print("Failed to grab frame, exiting.")
+                break
+
+            # Display the resulting frame
+            cv2.imshow('ASL Translation Feed', frame)
+
+            # In a real implementation, you would preprocess the frame and feed it to your model here.
+
+            # Simulate a translation every 5 seconds
+            if time.time() - last_translation_time > 5:
+                translated_text = "Hello" # Placeholder for model prediction
+                print(f"ASL Detected: {translated_text}")
+                on_translation(f"ASL: {translated_text}")
+                last_translation_time = time.time()
+
+            # Check for 'q' key press to quit the loop and close the window
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        # Release the camera and destroy all windows
+        self.camera.release()
+        cv2.destroyAllWindows()
+        print("ASL translation service stopped.")
