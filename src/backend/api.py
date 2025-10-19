@@ -11,8 +11,8 @@
     transcription services to the user interface.
  
 '''
+
 import threading
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -21,36 +21,35 @@ from recognizer import SpeechRecognizer
 
  
 # --- Global State and Services ---
-latest_transcriptions = {"asl": "Initializing...", "speech": "Initializing..."}
+class AppState:
+    def __init__(self):
+        self.latest_transcriptions = {"asl": "ASL service is off.", "speech": "Speech service is off."}
+        self.active_thread = None
+        self.stop_event = threading.Event()
+
+state = AppState()
 asl_translator = ASLTranslator()
 speech_recognizer = SpeechRecognizer()
 
 def update_asl_translation(text: str):
     """Callback to update the latest ASL transcription."""
-    latest_transcriptions["asl"] = text
+    state.latest_transcriptions["asl"] = text
 
 def update_speech_recognition(text: str):
     """Callback to update the latest speech recognition."""
-    latest_transcriptions["speech"] = text
+    state.latest_transcriptions["speech"] = text
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Manages the startup and shutdown of background services.
-    """
-    print("--- Starting background services ---")
-    # Run services in background threads
-    asl_thread = threading.Thread(target=asl_translator.start_translation, args=(update_asl_translation,), daemon=True)
-    speech_thread = threading.Thread(target=speech_recognizer.start_recognition, args=(update_speech_recognition,), daemon=True)
-    
-    asl_thread.start()
-    speech_thread.start()
-    
-    yield
-    
-    print("--- Application shutdown ---")
+def stop_current_service():
+    """Signals the current running service to stop."""
+    if state.active_thread and state.active_thread.is_alive():
+        print("--- Stopping current service ---")
+        state.stop_event.set()
+        state.active_thread.join() # Wait for the thread to finish
+        print("--- Service stopped ---")
+    state.stop_event.clear()
+    state.active_thread = None
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 # Configure CORS to allow requests from the frontend
 app.add_middleware(
@@ -61,7 +60,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
- 
+
 @app.get("/")
 async def root():
     """
@@ -70,6 +69,38 @@ async def root():
 
     return {"message": "Welcome to the real-time transcription API!"}
 
+@app.post("/start/asl")
+async def start_asl_service():
+    """Starts the ASL translation service."""
+    stop_current_service()
+    state.latest_transcriptions["speech"] = "Speech service is off."
+    state.active_thread = threading.Thread(
+        target=asl_translator.start_translation,
+        args=(update_asl_translation, state.stop_event),
+        daemon=True
+    )
+    state.active_thread.start()
+    return {"message": "ASL translation service started."}
+
+@app.post("/start/speech")
+async def start_speech_service():
+    """Starts the speech recognition service."""
+    stop_current_service()
+    state.latest_transcriptions["asl"] = "ASL service is off."
+    state.active_thread = threading.Thread(
+        target=speech_recognizer.start_recognition,
+        args=(update_speech_recognition, state.stop_event),
+        daemon=True
+    )
+    state.active_thread.start()
+    return {"message": "Speech recognition service started."}
+
+@app.post("/stop")
+async def stop_services():
+    """Stops any currently running service."""
+    stop_current_service()
+    state.latest_transcriptions = {"asl": "ASL service is off.", "speech": "Speech service is off."}
+    return {"message": "All services stopped."}
 
 @app.get("/asl-to-text")
 async def get_asl_transcription():
@@ -78,13 +109,13 @@ async def get_asl_transcription():
     Endpoint to get the latest ASL transcription.
     """
 
-    return {"text": latest_transcriptions["asl"]}
+    return {"text": state.latest_transcriptions["asl"]}
+
 
 @app.get("/speech-to-text")
 async def get_speech_transcription():
     """
-
     Endpoint to get the latest speech recognition.
     """
 
-    return {"text": latest_transcriptions["speech"]}
+    return {"text": state.latest_transcriptions["speech"]}
