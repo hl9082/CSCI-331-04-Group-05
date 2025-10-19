@@ -14,6 +14,7 @@ Importance:
 
 import speech_recognition as sr
 from typing import Callable
+import threading
 
 class SpeechRecognizer:
     """
