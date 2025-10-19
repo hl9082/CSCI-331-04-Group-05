@@ -110,10 +110,12 @@ class ASLTranslator:
         on_translation("ASL service is active...")
 
         if self.model is None:
-            print("Cannot start translation service: Model is not loaded.")
-            on_translation("Error: Model not loaded.")
-            return
 
+            print("Warning: Model is not loaded. Only the camera feed will be shown.")
+            on_translation("Error: Model not loaded.")
+
+            # We don't return, so the camera feed can still start.
+            
         if not self.camera.isOpened():
             self.camera.open(0) # Re-open camera if it was released
 
@@ -124,19 +126,22 @@ class ASLTranslator:
                 print("Failed to grab frame, exiting.")
                 break
 
-            # --- Real-time Inference ---
-            with torch.no_grad(): # Disable gradient calculation for efficiency
-                # 1. Preprocess the frame
-                input_tensor = self._preprocess_frame(frame)
-                # 2. Get model prediction
-                output = self.model(input_tensor)
-                # 3. Convert output to a label
-                _, predicted_idx = torch.max(output, 1)
-                predicted_label = self.class_labels[predicted_idx.item()]
 
-                # 4. Update the translation
-                print(f"ASL Detected: {predicted_label}")
-                on_translation(f"ASL: {predicted_label}")
+            # --- Real-time Inference (only if model is loaded) ---
+            if self.model is not None:
+                with torch.no_grad(): # Disable gradient calculation for efficiency
+                    # 1. Preprocess the frame
+                    input_tensor = self._preprocess_frame(frame)
+                    # 2. Get model prediction
+                    output = self.model(input_tensor)
+                    # 3. Convert output to a label
+                    _, predicted_idx = torch.max(output, 1)
+                    predicted_label = self.class_labels[predicted_idx.item()]
+
+
+                    # 4. Update the translation
+                    print(f"ASL Detected: {predicted_label}")
+                    on_translation(f"ASL: {predicted_label}")
 
             # Display the resulting frame
             cv2.imshow('ASL Translation Feed', frame)
