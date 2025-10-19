@@ -15,6 +15,7 @@ Importance:
 import cv2
 import time
 from typing import Callable
+import threading
 
 class ASLTranslator:
     """
