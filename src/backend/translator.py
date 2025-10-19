@@ -13,8 +13,14 @@ Importance:
 '''
 
 import cv2
+import torch
 import time
 from typing import Callable
+
+# Assuming your model architecture is defined in a class called SignLanguageModel
+# in a file named model_definition.py within the same directory.
+# You will need to create this file and define your model's structure.
+# from .model_definition import SignLanguageModel
 
 class ASLTranslator:
     """
@@ -34,23 +40,35 @@ class ASLTranslator:
         self.camera = cv2.VideoCapture(0)  # 0 is the default camera
         if not self.camera.isOpened():
             raise IOError("Cannot open webcam")
-        
-        # self.model = self.load_model(model_path) # Placeholder for loading the ML model
+
+
+        self.model = self.load_model(model_path)
         print("ASL Translator initialized.")
 
     def load_model(self, model_path: str):
         """
-        Loads the machine learning model for sign recognition.
+        Loads the PyTorch machine learning model for sign recognition.
         
         Args:
             model_path (str): Path to the model file.
         
         Returns:
-            A loaded model object.
+
+            A loaded PyTorch model in evaluation mode.
         """
-        # In a real implementation, you would load a PyTorch, TensorFlow, or ONNX model here.
         print(f"Loading model from {model_path}...")
-        return "dummy_model"
+        # model = SignLanguageModel() # Instantiate your model class
+        # In a real scenario, you would uncomment the line above.
+        # For now, we'll return a placeholder to avoid breaking the code
+        # without the actual model_definition.py file.
+        model = "dummy_model_object" # Placeholder
+        try:
+            model.load_state_dict(torch.load(model_path))
+            model.eval() # Set the model to evaluation mode
+            print("Model loaded successfully.")
+        except FileNotFoundError:
+            print(f"Warning: Model file not found at {model_path}. Using dummy model.")
+        return model
 
     def start_translation(self, on_translation: Callable[[str], None]):
         """

@@ -11,4 +11,5 @@ PyAudio
 fastapi
 uvicorn[standard]
 
+torch # for pytorch
 python-multipart
