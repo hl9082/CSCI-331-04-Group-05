@@ -10,3 +10,5 @@ PyAudio
 # Backend API
 fastapi
 uvicorn[standard]
+
+python-multipart
