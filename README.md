@@ -16,8 +16,10 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 *   **OpenCV**: Used for capturing and processing video frames from the camera for ASL recognition.
 *   **SpeechRecognition**: Manages microphone input and uses Google's Web Speech API to convert spoken words into text.
 *   **Threading**: A key method used to run the ASL translation and speech recognition services concurrently, ensuring a responsive user experience.
+*   **TypeScript**: Frontend.  
+*   **FastAPI**: Connect Python backend with TypeScript frontend
 
-### Getting Started
+## Getting Started
 
 #### Prerequisites
 
