@@ -18,6 +18,7 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 *   **Threading**: A key method used to run the ASL translation and speech recognition services concurrently, ensuring a responsive user experience.
 *   **TypeScript**: Frontend.  
 *   **FastAPI**: Connect Python backend with TypeScript frontend
+*   **Torch**: Used to load AI models to transcribe audio and video.
 
 ## Getting Started
 
