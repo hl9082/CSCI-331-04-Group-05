@@ -1,5 +1,5 @@
 # Computer Vision
-opencv-python
+opencv-python==4.11.0.86
 
 # Speech Recognition
 SpeechRecognition
