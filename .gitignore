@@ -32,8 +32,11 @@ venv/
 env/
 .env/
 
-# # Model files - These are often large and should not be stored in Git
-# models/
+# Model files - These are often large and should not be stored in Git
+models/data/
+models/*.h5
+models/*.pt
+models/*.pkl
 
 # IDE / Editor specific files
 .vscode/

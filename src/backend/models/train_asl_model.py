@@ -1,3 +1,15 @@
+'''
+ @author Will Stott (wjs8666)
+  @co-author Huy Le, Zoe Shearer, Josh Elliot
+  @purpose
+    This script trains a MobileNetV2 model on the ASL alphabet dataset.
+     It preprocesses the images, sets up the model, and runs a training loop.
+  @importance
+    This file is used to create and train the ASL recognition model that powers
+    the ASL translation service in the application.
+    
+'''
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -8,7 +20,7 @@ import os
 
 def main():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_DIR = os.path.join(BASE_DIR, "data/asl_alphabet_train/kaggleASLDataset/asl_alphabet_train/asl_alphabet_train")
+    DATA_DIR = "/Users/stott/CSCI-331-04-Group-05/src/backend/models/data/asl_alphabet_train/kaggleASLDataset/asl_alphabet_test"
     SAVE_PATH = os.path.join(BASE_DIR, "asl_model.pth")
 
     # Data transformations
