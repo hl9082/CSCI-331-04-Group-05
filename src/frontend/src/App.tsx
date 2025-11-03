@@ -1,5 +1,5 @@
 /**
-@author Huy Le (hl9082)
+@author Huy Le (hl9082), Joshua Elliot (jae4950)
 @brief This component is the main application component.
 @importance It is of high importance as it is the root component of the application.
 **/
