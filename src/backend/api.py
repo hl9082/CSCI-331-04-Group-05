@@ -11,6 +11,7 @@
 '''
 
 import threading
+import torch.nn.functional as F
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from PIL import Image
@@ -160,9 +161,10 @@ async def predict_asl(file: UploadFile = File(...)):
         img_tensor = transform(image).unsqueeze(0)
         with torch.no_grad():
             outputs = model(img_tensor)
-            _, pred = torch.max(outputs, 1)
+            probs = F.softmax(outputs, dim=1)
+            conf, pred = torch.max(probs, 1)
             label = class_labels[pred.item()]
-        return JSONResponse(content={"prediction": label})
+        return JSONResponse(content={"prediction": label, "confidence": float(conf.item())})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
 

@@ -17,6 +17,18 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader, random_split
 
 import os
+import random
+from torchvision.datasets import ImageFolder
+
+
+def balanced_subset(dataset, samples_per_class):
+    class_indices = [[] for _ in dataset.classes]
+    for idx, (_, label) in enumerate(dataset.samples):
+        class_indices[label].append(idx)
+    selected_indices = []
+    for indices in class_indices:
+        selected_indices.extend(random.sample(indices, min(samples_per_class, len(indices))))
+    return torch.utils.data.Subset(dataset, selected_indices)
 
 def main():
 
@@ -39,11 +51,12 @@ def main():
     # Load dataset
     print("Loading dataset...")
     train_dataset = datasets.ImageFolder(root=DATA_DIR, transform=transform)
+    balanced = balanced_subset(train_dataset, samples_per_class=32)
 
     # Use a small subset for quick testing
     subset_size = 32
     subset, _ = random_split(train_dataset, [subset_size, len(train_dataset) - subset_size])
-    train_loader = DataLoader(subset, batch_size=32, shuffle=True, num_workers=0)
+    train_loader = DataLoader(balanced, batch_size=32, shuffle=True, num_workers=0)
 
     print(f"Loaded {len(subset)} images from {len(train_dataset.classes)} classes.")
 
