@@ -1,4 +1,5 @@
 '''
+train_asl_model.py
  @author Will Stott (wjs8666)
   @co-author Huy Le, Zoe Shearer, Josh Elliot
   @purpose
@@ -7,7 +8,6 @@
   @importance
     This file is used to create and train the ASL recognition model that powers
     the ASL translation service in the application.
-    
 '''
 
 import torch
@@ -17,8 +17,26 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader, random_split
 
 import os
+import random
+from torchvision.datasets import ImageFolder
+
+
+def balanced_subset(dataset, samples_per_class):
+    class_indices = [[] for _ in dataset.classes]
+    for idx, (_, label) in enumerate(dataset.samples):
+        class_indices[label].append(idx)
+    selected_indices = []
+    for indices in class_indices:
+        selected_indices.extend(random.sample(indices, min(samples_per_class, len(indices))))
+    return torch.utils.data.Subset(dataset, selected_indices)
 
 def main():
+
+    class_labels = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "space", "nothing"
+    ]
+
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     DATA_DIR = "data/asl_alphabet_train/asl_alphabet_train"
     SAVE_PATH = os.path.join(BASE_DIR, "asl_model.pth")
@@ -33,18 +51,19 @@ def main():
     # Load dataset
     print("Loading dataset...")
     train_dataset = datasets.ImageFolder(root=DATA_DIR, transform=transform)
+    balanced = balanced_subset(train_dataset, samples_per_class=32)
 
     # Use a small subset for quick testing
-    subset_size = 5000
+    subset_size = 32
     subset, _ = random_split(train_dataset, [subset_size, len(train_dataset) - subset_size])
-    train_loader = DataLoader(subset, batch_size=32, shuffle=True, num_workers=0)
+    train_loader = DataLoader(balanced, batch_size=32, shuffle=True, num_workers=0)
 
     print(f"Loaded {len(subset)} images from {len(train_dataset.classes)} classes.")
 
     # Model setup
     print("Setting up model...")
     model = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
-    model.classifier[1] = nn.Linear(model.last_channel, len(train_dataset.classes))
+    model.classifier[1] = nn.Linear(model.last_channel, len(class_labels))
     print("Model loaded")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
