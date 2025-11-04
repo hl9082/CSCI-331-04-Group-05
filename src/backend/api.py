@@ -13,13 +13,54 @@
 '''
 
 import threading
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import JSONResponse
+from PIL import Image
+import torch
+import torchvision.transforms as transforms
+from torchvision import models
+import io
+import os
 from fastapi.middleware.cors import CORSMiddleware
 
 from translator import ASLTranslator
 from recognizer import SpeechRecognizer
 
- 
+# -- Import Model --
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
+
+# initalize and eval model
+model = models.mobilenet_v2(weights=None)
+num_classes = 26  # Set to your actual class count
+model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
+model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
+model.train(False)
+
+# use the same transform as training
+transform = transforms.Compose([
+    transforms.Resize((32, 32)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+])
+
+class_labels = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+]
+
+# --- FastAPI Setup ---
+app = FastAPI()
+
+# Configure CORS to allow requests from the frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 # --- Global State and Services ---
 class AppState:
     def __init__(self):
@@ -48,18 +89,6 @@ def stop_current_service():
         print("--- Service stopped ---")
     state.stop_event.clear()
     state.active_thread = None
-
-app = FastAPI()
-
-# Configure CORS to allow requests from the frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
-
 
 @app.get("/")
 async def root():
@@ -117,3 +146,20 @@ async def get_speech_transcription():
     Endpoint to get the latest speech recognition.
     """
     return {"text": state.latest_transcriptions["speech"]}
+
+# Predition api endpoint
+@app.post("/predict-asl")
+async def predict_asl(file: UploadFile = File(...)):
+    try:
+        image_bytes = await file.read()
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        img_tensor = transform(image).unsqueeze(0)
+        with torch.no_grad():
+            outputs = model(img_tensor)
+            _, pred = torch.max(outputs, 1)
+            label = class_labels[pred.item()]
+        return JSONResponse(content={"prediction": label})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+
+
