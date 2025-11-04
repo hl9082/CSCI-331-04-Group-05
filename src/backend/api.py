@@ -32,8 +32,8 @@ class_labels = [
 ]
 
 # -- Import Model --
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
 
 # initalize and eval model
 model = models.mobilenet_v2(weights=None) # use mobilenet_v2 architecture
