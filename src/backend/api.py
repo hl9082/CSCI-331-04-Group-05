@@ -27,15 +27,15 @@ from translator import ASLTranslator
 from recognizer import SpeechRecognizer
 
 # -- Import Model --
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
 
 # initalize and eval model
-model = models.mobilenet_v2(weights=None)
-num_classes = 26  # Set to your actual class count
-model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
-model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
-model.train(False)
+# model = models.mobilenet_v2(weights=None)
+# num_classes = 26  # Set to your actual class count
+# model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
+# model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
+# model.train(False)
 
 # use the same transform as training
 transform = transforms.Compose([
@@ -117,7 +117,7 @@ async def start_speech_service():
     state.latest_transcriptions["asl"] = "ASL service is off."
     state.active_thread = threading.Thread(
         target=speech_recognizer.start_recognition,
-        args=(update_speech_recognition, state.stop_event),
+        args=(state.stop_event, update_speech_recognition),
         daemon=True
     )
     state.active_thread.start()
@@ -148,18 +148,18 @@ async def get_speech_transcription():
     return {"text": state.latest_transcriptions["speech"]}
 
 # Predition api endpoint
-@app.post("/predict-asl")
-async def predict_asl(file: UploadFile = File(...)):
-    try:
-        image_bytes = await file.read()
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        img_tensor = transform(image).unsqueeze(0)
-        with torch.no_grad():
-            outputs = model(img_tensor)
-            _, pred = torch.max(outputs, 1)
-            label = class_labels[pred.item()]
-        return JSONResponse(content={"prediction": label})
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
+# @app.post("/predict-asl")
+# async def predict_asl(file: UploadFile = File(...)):
+#     try:
+#         image_bytes = await file.read()
+#         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+#         img_tensor = transform(image).unsqueeze(0)
+#         with torch.no_grad():
+#             outputs = model(img_tensor)
+#             _, pred = torch.max(outputs, 1)
+#             label = class_labels[pred.item()]
+#         return JSONResponse(content={"prediction": label})
+#     except Exception as e:
+#         return JSONResponse(content={"error": str(e)}, status_code=400)
 
 
