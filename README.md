@@ -53,6 +53,8 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
     python main.py
     ```
 
+    Image dataset downloaded from kaggle: https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
+
 
 4.  **Run the Frontend Application:**
     In a **new terminal**, navigate to the frontend directory and start the development server.

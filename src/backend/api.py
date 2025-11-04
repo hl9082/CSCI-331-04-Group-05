@@ -1,5 +1,4 @@
 '''
-
  @author Huy Le (hl9082)
   @co-author Will Stott, Zoe Shearer, Josh Elliot
   @purpose
@@ -9,7 +8,6 @@
   @importance
     This file is the bridge between the frontend and the backend. It exposes the
     transcription services to the user interface.
- 
 '''
 
 import threading
@@ -26,15 +24,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from translator import ASLTranslator
 from recognizer import SpeechRecognizer
 
+# define class labels for ASL model
+class_labels = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'space', 'nothing'
+]
+
 # -- Import Model --
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
 
 # initalize and eval model
-model = models.mobilenet_v2(weights=None)
-num_classes = 26  # Set to your actual class count
+model = models.mobilenet_v2(weights=None) # use mobilenet_v2 architecture
+num_classes = len(class_labels)  
 model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
-model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
+checkpoint = torch.load(MODEL_PATH, map_location='cpu')
+
+model.load_state_dict(checkpoint)
+
 model.train(False)
 
 # use the same transform as training
@@ -44,10 +51,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
 
-class_labels = [
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-]
+
 
 # --- FastAPI Setup ---
 app = FastAPI()

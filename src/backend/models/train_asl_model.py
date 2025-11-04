@@ -1,4 +1,5 @@
 '''
+train_asl_model.py
  @author Will Stott (wjs8666)
   @co-author Huy Le, Zoe Shearer, Josh Elliot
   @purpose
@@ -7,7 +8,6 @@
   @importance
     This file is used to create and train the ASL recognition model that powers
     the ASL translation service in the application.
-    
 '''
 
 import torch
@@ -19,8 +19,14 @@ from torch.utils.data import DataLoader, random_split
 import os
 
 def main():
+
+    class_labels = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "space", "nothing"
+    ]
+
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_DIR = "/Users/stott/CSCI-331-04-Group-05/src/backend/models/data/asl_alphabet_train/kaggleASLDataset/asl_alphabet_test"
+    DATA_DIR = "/Users/stott/CSCI-331-04-Group-05/src/backend/models/data/asl_alphabet_train/kaggleASLDataset/asl_alphabet_train"
     SAVE_PATH = os.path.join(BASE_DIR, "asl_model.pth")
 
     # Data transformations
@@ -35,7 +41,7 @@ def main():
     train_dataset = datasets.ImageFolder(root=DATA_DIR, transform=transform)
 
     # Use a small subset for quick testing
-    subset_size = 5000
+    subset_size = 32
     subset, _ = random_split(train_dataset, [subset_size, len(train_dataset) - subset_size])
     train_loader = DataLoader(subset, batch_size=32, shuffle=True, num_workers=0)
 
@@ -44,7 +50,7 @@ def main():
     # Model setup
     print("Setting up model...")
     model = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
-    model.classifier[1] = nn.Linear(model.last_channel, len(train_dataset.classes))
+    model.classifier[1] = nn.Linear(model.last_channel, len(class_labels))
     print("Model loaded")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
