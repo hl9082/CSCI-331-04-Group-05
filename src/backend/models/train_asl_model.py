@@ -38,7 +38,7 @@ def main():
     ]
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_DIR = "/Users/stott/CSCI-331-04-Group-05/src/backend/models/data/asl_alphabet_train/kaggleASLDataset/asl_alphabet_train"
+    DATA_DIR = "data/asl_alphabet_train/asl_alphabet_train"
     SAVE_PATH = os.path.join(BASE_DIR, "asl_model.pth")
 
     # Data transformations

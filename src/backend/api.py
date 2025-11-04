@@ -32,8 +32,8 @@ class_labels = [
 ]
 
 # -- Import Model --
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# MODEL_PATH = os.path.join(BASE_DIR, 'models', 'asl_model.pth')
 
 # initalize and eval model
 model = models.mobilenet_v2(weights=None) # use mobilenet_v2 architecture
@@ -122,7 +122,7 @@ async def start_speech_service():
     state.latest_transcriptions["asl"] = "ASL service is off."
     state.active_thread = threading.Thread(
         target=speech_recognizer.start_recognition,
-        args=(update_speech_recognition, state.stop_event),
+        args=(state.stop_event, update_speech_recognition),
         daemon=True
     )
     state.active_thread.start()
