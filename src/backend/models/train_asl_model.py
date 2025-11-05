@@ -22,12 +22,42 @@ from torchvision.datasets import ImageFolder
 
 
 def balanced_subset(dataset, samples_per_class):
+    """
+    Creates a balanced subset of a dataset by sampling a fixed number of
+    samples from each class.
+
+    This function is useful for addressing class imbalance by ensuring
+    each class is represented (up to) a specified number of times in
+    the new subset.
+
+    Args:
+        dataset (torch.utils.data.Dataset): The original dataset. This
+            dataset object must have a `.samples` attribute (a list of
+            (sample, label) tuples) and a `.classes` attribute. This
+            is standard for datasets like `torchvision.datasets.ImageFolder`.
+        samples_per_class (int): The target number of samples to
+            randomly select from each class. If a class has fewer
+            total samples than this number, all samples from that
+            class will be included.
+
+    Returns:
+        torch.utils.data.Subset: A new Subset object containing the
+            balanced selection of indices from the original dataset.
+    """
+    # Create a list of lists to store indices for each class
     class_indices = [[] for _ in dataset.classes]
+    
+    # Populate the lists with indices for each sample's label
     for idx, (_, label) in enumerate(dataset.samples):
         class_indices[label].append(idx)
     selected_indices = []
+    
+    # Randomly sample from each class's index list
     for indices in class_indices:
+        # Add the randomly sampled indices to our final list
         selected_indices.extend(random.sample(indices, min(samples_per_class, len(indices))))
+    # Create and return a new Subset using the original dataset and the
+    # new balanced list of indices    
     return torch.utils.data.Subset(dataset, selected_indices)
 
 def main():
