@@ -122,7 +122,7 @@ async def start_speech_service():
     state.latest_transcriptions["asl"] = "ASL service is off."
     state.active_thread = threading.Thread(
         target=speech_recognizer.start_recognition,
-        args=(state.stop_event, update_speech_recognition),
+        args=(update_speech_recognition, state.stop_event),
         daemon=True
     )
     state.active_thread.start()

@@ -38,26 +38,29 @@ class SpeechRecognizer:
             self.recognizer.adjust_for_ambient_noise(source, duration=2)
         print("Calibration complete.")
 
-    def start_recognition(self, stop_event,on_recognition: Callable[[str], None] = print):
+    def start_recognition(self, on_recognition: Callable[[str], None]):
+        """
+        Starts listening for speech and processing it.
+
+        Args:
+            on_recognition (Callable[[str], None]): A callback function to be called
+                when speech is recognized. It takes the recognized text as an argument.
+        """
         print("Starting speech recognition service...")
         with self.microphone as source:
-            try:
-                while not stop_event.is_set():
-                    print("Listening...")
+            while True:
+                print("Listening for speech...")
+                try:
                     audio = self.recognizer.listen(source)
                     # The `recognize_google` function is used here to send the captured
                     # audio to Google's Web Speech API for transcription. 
                     # Use getattr to dynamically access the method. 
-                    try:
-                        text = self.recognizer.recognize_google(audio)
-                        print(f"Speech Detected: {text}")
-                        # on_recognition(f"Speech: {text}")
-                        on_recognition(text)
-                    except sr.UnknownValueError:
-                        # This error means the recognizer could not understand the audio.
-                        # We can safely ignore it and just continue listening.
-                        print("Didn't catch that, please repeat.")
-                    except sr.RequestError as e:
-                        print(f"API request failed: {e}")
-            except KeyboardInterrupt:
-                print("\nStopping speech recognition.")
+                    text = getattr(self.recognizer, "recognize_google")(audio)
+                    print(f"Speech Detected: {text}")
+                    # on_recognition(f"Speech: {text}")
+                except sr.UnknownValueError:
+                    # This error means the recognizer could not understand the audio.
+                    # We can safely ignore it and just continue listening.
+                    pass
+                except sr.RequestError as e:
+                    print(f"Could not request results from Google Speech Recognition service; {e}")
