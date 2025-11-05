@@ -1,11 +1,11 @@
 '''
 train_asl_model.py
  @author Will Stott (wjs8666)
-  @co-author Huy Le, Zoe Shearer, Josh Elliot
-  @purpose
+ @co-author Huy Le, Zoe Shearer, Josh Elliot
+ @purpose
     This script trains a MobileNetV2 model on the ASL alphabet dataset.
      It preprocesses the images, sets up the model, and runs a training loop.
-  @importance
+ @importance
     This file is used to create and train the ASL recognition model that powers
     the ASL translation service in the application.
 '''
