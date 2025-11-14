@@ -16,7 +16,7 @@ import cv2
 import time
 from typing import Callable
 import torch
-from torchvision import transforms
+from torchvision import models, transforms
 from PIL import Image
 import threading
 
@@ -46,14 +46,16 @@ class ASLTranslator:
 
         # Define the same transformations used during model training
         self.transform = transforms.Compose([
-            transforms.Resize((224, 224)),
+            transforms.Resize((32, 32)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
         ])
 
         # This should map the model's output indices to class names
-        # Example: 0 -> 'Hello', 1 -> 'Thank You', etc.
-        self.class_labels = ['Hello', 'Thank You', 'I Love You', 'Yes', 'No'] # Replace with your actual labels
+        self.class_labels = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'space', 'nothing'
+        ] # Replace with your actual labels
 
         self.model = self.load_model(model_path)
         print("ASL Translator initialized.")
@@ -69,10 +71,20 @@ class ASLTranslator:
         Returns:
             A loaded model object.
         """
-
         try:
             print(f"Loading model from {model_path}...")
-            model = torch.load(model_path, map_location=self.device)
+            # The model is MobileNetV2, we need to initialize it first
+            model = models.mobilenet_v2(weights=None)
+            
+            # Adjust the classifier for our number of classes
+            num_classes = len(self.class_labels)
+            model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
+
+            # Load the saved state dictionary
+            state_dict = torch.load(model_path, map_location=self.device)
+            model.load_state_dict(state_dict)
+            
+            model.to(self.device)
             model.eval()  # Set the model to evaluation mode
             print("Model loaded successfully.")
             return model
