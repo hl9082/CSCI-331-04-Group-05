@@ -107,7 +107,9 @@ class ASLTranslator:
         tensor = self.transform(pil_image).unsqueeze(0)
         return tensor.to(self.device)
 
-
+# To-do: we're not gonna use the video capture at the moment. Instead, we shall upload the image into the frontend after
+# pressing the button, and then the frontend will connect with the backend to translate the given ASL image into 
+# alphabetical letter
     def start_translation(self, on_translation: Callable[[str], None], stop_event: threading.Event):
         """
         Starts the video capture and translation loop.
