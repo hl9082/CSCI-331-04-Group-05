@@ -4,28 +4,25 @@ Co-author: Will Stott, Zoe Shearer, Josh Elliot
 Purpose:
   This module defines the ASLTranslator class, which is responsible for
   translating American Sign Language (ASL) gestures into English text. It
-  uses the device's camera to capture video and a machine learning model to
-  interpret the signs.
+  uses a machine learning model to interpret sign images.
 Importance:
   This is a key feature of the project and one of the two primary input
-  methods. It allows the user to understand signed language by reading it as
-  subtitles, directly bridging a major communication gap.
+  methods.
 '''
 
-import cv2
-import time
-from typing import Callable
 import torch
-from torchvision import transforms
+from torchvision import models, transforms
 from PIL import Image
-import threading
+import io
+import torch.nn.functional as F
+
 
 class ASLTranslator:
     """
-    Handles the real-time translation of ASL signs from a video feed.
+    Handles the translation of ASL signs from an image file.
     
-    This class will manage capturing frames from the camera, processing them,
-    and using a machine learning model to predict the signed word or phrase.
+    This class will manage processing an image and using a machine learning 
+    model to predict the signed word or phrase.
     """
 
     def __init__(self, model_path: str = "models/asl_model.pth"):
@@ -35,29 +32,25 @@ class ASLTranslator:
         Args:
             model_path (str): The path to the pre-trained ASL recognition model.
         """
-        self.camera = cv2.VideoCapture(0)  # 0 is the default camera
-        if not self.camera.isOpened():
-            raise IOError("Cannot open webcam")
-
-
         # --- Model and Preprocessing Setup ---
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {self.device}")
 
         # Define the same transformations used during model training
         self.transform = transforms.Compose([
-            transforms.Resize((224, 224)),
+            transforms.Resize((32, 32)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
         ])
 
         # This should map the model's output indices to class names
-        # Example: 0 -> 'Hello', 1 -> 'Thank You', etc.
-        self.class_labels = ['Hello', 'Thank You', 'I Love You', 'Yes', 'No'] # Replace with your actual labels
+        self.class_labels = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'space', 'nothing'
+        ]  # Replace with your actual labels
 
         self.model = self.load_model(model_path)
         print("ASL Translator initialized.")
-
 
     def load_model(self, model_path: str):
         """
@@ -69,10 +62,20 @@ class ASLTranslator:
         Returns:
             A loaded model object.
         """
-
         try:
             print(f"Loading model from {model_path}...")
-            model = torch.load(model_path, map_location=self.device)
+            # The model is MobileNetV2, we need to initialize it first
+            model = models.mobilenet_v2(weights=None)
+            
+            # Adjust the classifier for our number of classes
+            num_classes = len(self.class_labels)
+            model.classifier[1] = torch.nn.Linear(model.last_channel, num_classes)
+
+            # Load the saved state dictionary
+            state_dict = torch.load(model_path, map_location=self.device)
+            model.load_state_dict(state_dict)
+            
+            model.to(self.device)
             model.eval()  # Set the model to evaluation mode
             print("Model loaded successfully.")
             return model
@@ -84,75 +87,30 @@ class ASLTranslator:
             print(f"An error occurred while loading the model: {e}")
             return None
 
-
-    def _preprocess_frame(self, frame) -> torch.Tensor:
-        """Converts a cv2 frame to a model-ready tensor."""
-        # Convert the BGR frame to RGB
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # Convert to PIL Image
-        pil_image = Image.fromarray(rgb_frame)
-        # Apply transformations and add a batch dimension
-        tensor = self.transform(pil_image).unsqueeze(0)
-        return tensor.to(self.device)
-
-
-    def start_translation(self, on_translation: Callable[[str], None], stop_event: threading.Event):
+    def translate_image(self, image_bytes: bytes):
         """
-        Starts the video capture and translation loop.
+        Translates an ASL sign from an image.
 
         Args:
-            on_translation (Callable[[str], None]): A callback function to be called
-                when a translation is available. It takes the translated text as an argument.
-            stop_event (threading.Event): An event to signal when to stop the loop.
+            image_bytes (bytes): The bytes of the image to be translated.
+
+        Returns:
+            A tuple containing the predicted label and the confidence score.
         """
-
-        print("Starting ASL translation service... (Press 'q' in the video window to stop)")
-        on_translation("ASL service is active...")
-
         if self.model is None:
+            raise Exception("Model is not loaded.")
 
-            print("Warning: Model is not loaded. Only the camera feed will be shown.")
-            on_translation("Error: Model not loaded.")
+        try:
+            image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+            img_tensor = self.transform(image).unsqueeze(0)
 
-            # We don't return, so the camera feed can still start.
+            with torch.no_grad():
+                outputs = self.model(img_tensor)
+                probs = F.softmax(outputs, dim=1)
+                conf, pred = torch.max(probs, 1)
+                label = self.class_labels[pred.item()]
             
-        if not self.camera.isOpened():
-            self.camera.open(0) # Re-open camera if it was released
-
-        while not stop_event.is_set():
-
-            ret, frame = self.camera.read()
-            if not ret:
-                print("Failed to grab frame, exiting.")
-                break
-
-
-            # --- Real-time Inference (only if model is loaded) ---
-            if self.model is not None:
-                with torch.no_grad(): # Disable gradient calculation for efficiency
-                    # 1. Preprocess the frame
-                    input_tensor = self._preprocess_frame(frame)
-                    # 2. Get model prediction
-                    output = self.model(input_tensor)
-                    # 3. Convert output to a label
-                    _, predicted_idx = torch.max(output, 1)
-                    predicted_label = self.class_labels[predicted_idx.item()]
-
-
-                    # 4. Update the translation
-                    print(f"ASL Detected: {predicted_label}")
-                    on_translation(f"ASL: {predicted_label}")
-
-            # Display the resulting frame
-            cv2.imshow('ASL Translation Feed', frame)
-
-
-            # Check for 'q' key press to quit the loop and close the window
-
-            if cv2.waitKey(1) & 0xFF == ord('q') or stop_event.is_set():
-                break
-
-        # Release the camera and destroy all windows
-        self.camera.release()
-        cv2.destroyAllWindows()
-        print("ASL translation service stopped.")
+            return label, float(conf.item())
+        except Exception as e:
+            print(f"An error occurred during translation: {e}")
+            return None, None
