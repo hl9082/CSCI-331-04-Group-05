@@ -51,7 +51,7 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
    a) Load the model:
 - cd src/backend/models
 - python train_asl_model.py
-    From the project's root directory, run the `main.py` script. This will initialize the backend services.
+- From the project's root directory, run the `main.py` script. This will initialize the backend services.
     ```bash
     cd ../.. 
     ```bash
