@@ -1,4 +1,4 @@
-Datasets: https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
+Datasets (author Akash Nagaraj): https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
 PyTorch: https://pypi.org/project/torch/
 OpenCV: https://pypi.org/project/torch/
 SpeechRecognition: https://pypi.org/project/SpeechRecognition/
