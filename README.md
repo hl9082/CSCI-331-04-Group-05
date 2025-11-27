@@ -19,6 +19,10 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 *   **TypeScript**: Frontend.  
 *   **FastAPI**: Connect Python backend with TypeScript frontend
 *   **Torch**: Used to load AI models to transcribe audio and video.
+*   **PyAudio**: A must-have dependency for SpeechRecognition
+*   **Pillow**: Allowing the backend to have image processing
+*   **Uvicorn**: an ASGI web server implementation for Python.
+
 
 ## Getting Started
 
