@@ -1,0 +1,13 @@
+Datasets: https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
+PyTorch: https://pypi.org/project/torch/
+OpenCV: https://pypi.org/project/torch/
+SpeechRecognition: https://pypi.org/project/SpeechRecognition/
+PyAudio: https://pypi.org/project/PyAudio/
+FastAPI: https://pypi.org/project/fastapi/
+Uvicorn: https://pypi.org/project/uvicorn/
+TorchVision: https://pypi.org/project/torchvision/
+Pillow: https://pypi.org/project/Pillow/
+
+Model used in this case: MobileNetV2
+- Reference link: https://pytorch.org/hub/pytorch_vision_mobilenet_v2/
+Presentation slides: https://docs.google.com/presentation/d/1Nzr29r7d1N9cZMPvwaRf7edONSpcfI56IbGnmXdtPYM/edit?slide=id.p#slide=id.p
