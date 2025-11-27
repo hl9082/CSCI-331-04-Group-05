@@ -34,6 +34,8 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 1.  **Install Backend Dependencies:**
     Install the necessary Python packages.
     ```bash
+    cd src\backend
+    venv\Scripts\activate
     pip install -r requirements.txt
     ```
 
@@ -46,6 +48,9 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
     ```
 
 3.  **Run the Backend Server:**
+   a) Load the model:
+- cd src/backend/models
+- python train_asl_model.py
     From the project's root directory, run the `main.py` script. This will initialize the backend services.
     ```bash
     cd ../.. 
@@ -56,7 +61,7 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
     Image dataset downloaded from kaggle: https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
 
 
-4.  **Run the Frontend Application:**
+5.  **Run the Frontend Application:**
     In a **new terminal**, navigate to the frontend directory and start the development server.
     ```bash
     cd src/frontend
