@@ -107,7 +107,7 @@ def main():
 
     # Training loop
     # trains a neural network using a dataset of labeled ASL images
-    EPOCHS = 3  
+    EPOCHS = 50  
 
     for epoch in range(EPOCHS):
         model.train() # Set model to training mode
@@ -115,7 +115,7 @@ def main():
         print(f"Starting epoch {epoch+1}/{EPOCHS}...")
         # iterate through batches of training data (images, labels)
         for images, labels in train_loader:
-            print(f"Processing batch of size {images.size(0)}")
+            # print(f"Processing batch of size {images.size(0)}")
 
             images, labels = images.to(device), labels.to(device) # move images, labels to (CPU or GPU)
 
