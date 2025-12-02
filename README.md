@@ -31,6 +31,14 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 *   Python 3.7+
 *   A connected webcam
 *   A functional microphone
+*   Kaggle ASL Dataset
+
+## Downloading the Dataset
+'
+    Download the ASL Alphabet from Kaggle and save the downloaded folder to src/backend/models/data
+    Image dataset downloaded from kaggle: 
+    
+    https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
 
 #### Important Commands
 
@@ -75,9 +83,4 @@ b) From the project's root directory, run the `main.py` script. This will initia
     You can then access the application in your web browser, typically at `http://localhost:3000`. To stop the application, press `Ctrl+C` in the terminals where the backend and frontend are running.
 
 
-## Downloading the Dataset
-'''
-    Download the ASL Alphabet from Kaggle and save the downloaded folder to src/backend/models/data
-    Image dataset downloaded from kaggle: '''
-    
-    https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
+
