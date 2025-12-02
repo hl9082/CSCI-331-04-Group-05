@@ -73,3 +73,7 @@ b) From the project's root directory, run the `main.py` script. This will initia
     npm start
     ```
     You can then access the application in your web browser, typically at `http://localhost:3000`. To stop the application, press `Ctrl+C` in the terminals where the backend and frontend are running.
+
+
+## Downloading the Dataset
+    Download the ASL Alphabet from Kaggle: [https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download](url) and save the folder called "data" to src/backend/models/data
