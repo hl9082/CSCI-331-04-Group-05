@@ -34,9 +34,14 @@ This project aims to develop an AI agent integrated into glasses to bridge the c
 *   Kaggle ASL Dataset
 
 ## Downloading the Dataset
-'
-    Download the ASL Alphabet from Kaggle and save the downloaded folder to src/backend/models/data
-    Image dataset downloaded from kaggle: 
+
+Download the ASL Alphabet dataset from Kaggle and unzip the file. Place the extracted folder inside:
+
+    src/backend/models/data
+
+This project uses the following dataset:
+
+ASL Alphabet Dataset (Kaggle):
     
     https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
 
