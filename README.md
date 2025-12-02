@@ -63,7 +63,7 @@ b) From the project's root directory, run the `main.py` script. This will initia
     python main.py
     ```
 
-    Image dataset downloaded from kaggle: https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
+    
 
 
 5.  **Run the Frontend Application:**
@@ -76,4 +76,5 @@ b) From the project's root directory, run the `main.py` script. This will initia
 
 
 ## Downloading the Dataset
-    Download the ASL Alphabet from Kaggle: [https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download](url) and save the folder called "data" to src/backend/models/data
+    Download the ASL Alphabet from Kaggle and save the downloaded folder to src/backend/models/data
+    Image dataset downloaded from kaggle: https://www.kaggle.com/datasets/grassknoted/asl-alphabet?resource=download
